@@ -10,64 +10,68 @@ const wss = new WebSocketServer({ server });
 app.use(express.static(path.join(__dirname)));
 
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', time: new Date().toISOString() });
+    res.json({ status: 'healthy', uptime: process.uptime(), time: new Date().toISOString() });
 });
 
-// استخدام نقطة نهاية REST موثوقة وجلب دوري آمن للأسعار لتجنب قيود WebSocket المجانية
 const POLYGON_API_KEY = process.env.POLYGON_API_KEY || 'pp9Wp8ypugygYEp6YFkEssQIUjs90Wu8';
 const SYMBOLS = ['SNAP', 'MVIS', 'SG', 'RKLB', 'CHPT', 'BLNK', 'HUMA', 'AGEN', 'ENSC', 'TMCI', 'AMPL', 'RDW', 'INO', 'LASE', 'PLUG', 'CRDL', 'ADMA', 'OPTT', 'INLF'];
 
-let latestPrices = {};
+let marketCache = {};
 
-async function fetchMarketPrices() {
-    const fetch = (await import('node-fetch')).default;
-    for (const sym of SYMBOLS) {
-        try {
-            const url = `https://api.polygon.io/v2/aggs/ticker/${sym}/prev?apiKey=${POLYGON_API_KEY}`;
-            const resp = await fetch(url);
-            const data = await resp.json();
-            if (data && data.results && data.results.length > 0) {
-                const resObj = data.results[0];
-                latestPrices[sym] = {
-                    price: resObj.c, // Close price of previous session
-                    high: resObj.h,
-                    low: resObj.l,
-                    volume: resObj.v,
-                    time: Date.now()
-                };
-                broadcastToClients({ type: 'STOCK_TICK', symbol: sym, price: resObj.c, time: Date.now() });
+async function fetchRealMarketData() {
+    try {
+        const fetch = (await import('node-fetch')).default;
+        for (const sym of SYMBOLS) {
+            try {
+                const url = `https://api.polygon.io/v1/open-close/${sym}/2026-08-14?adjusted=true&apiKey=${POLYGON_API_KEY}`;
+                const resp = await fetch(url);
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data && data.close) {
+                        marketCache[sym] = {
+                            price: data.close,
+                            high: data.high || data.close,
+                            low: data.low || data.close,
+                            volume: data.volume || 0,
+                            status: 'OPEN',
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                }
+            } catch (err) {
+                console.error(`Error polling ${sym}:`, err.message);
             }
-        } catch (e) {
-            console.error(`[Market Poller] Error fetching ${sym}:`, e.message);
+            await new Promise(r => setTimeout(r, 600));
         }
-        // فاصل زمني آمن بين الطلبات لتجنب تجاوز حد الطلبات
-        await new Promise(r => setTimeout(r, 800));
+        broadcast({ type: 'MARKET_DATA_UPDATE', data: marketCache });
+    } catch (e) {
+        console.error('Market fetch cycle error:', e.message);
     }
 }
 
-function broadcastToClients(data) {
-    const payload = JSON.stringify(data);
+function broadcast(payload) {
+    const dataStr = JSON.stringify(payload);
     wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
-            client.send(payload);
+            client.send(dataStr);
         }
     });
 }
 
 wss.on('connection', (ws) => {
-    console.log('[Client] Browser client connected');
-    ws.send(JSON.stringify({ type: 'INITIAL_PRICES', data: latestPrices }));
+    console.log('[WebSocket] New client connected');
+    ws.send(JSON.stringify({ type: 'WELCOME', data: marketCache }));
 
     ws.on('close', () => {
-        console.log('[Client] Browser client disconnected');
+        console.log('[WebSocket] Client disconnected');
     });
 });
 
-// بدء التحديث الدوري للسوق كل 60 ثانية
-setInterval(fetchMarketPrices, 60000);
-setTimeout(fetchMarketPrices, 2000); // تحديث فوري عند الإقلاع
+// تحديث دوري كل دقيقة
+setInterval(fetchRealMarketData, 60000);
+setTimeout(fetchRealMarketData, 1500);
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-    console.log(`[Server] Asiri Capital Market Bridge running on port ${PORT}`);
+    console.log(`[Server] Asiri Capital Production Server running on port ${PORT}`);
 });
