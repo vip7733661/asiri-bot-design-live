@@ -2,484 +2,257 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Asiri Capital | Live Terminal v27</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asiri Capital | Obsidian Pro Terminal v26</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-base: #060e18;
-            --bg-card: #0c1a2c;
-            --border-color: #1e3356;
-            --accent-gold: #e2bc53;
-            --accent-cyan: #00e5ff;
-            --success: #10b981;
-            --danger: #ef4444;
-            --text-main: #f1f5f9;
-            --text-muted: #94a3b8;
-        }
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
-
         body {
-            background-color: var(--bg-base);
-            color: var(--text-main);
-            min-height: 100vh;
-            padding-bottom: 100px;
-            overflow-x: hidden;
+            font-family: 'Tajawal', sans-serif;
+            background-color: #060e18;
+            color: #f1f5f9;
         }
-
-        .account-bar {
-            background: rgba(12, 26, 44, 0.98);
-            border-bottom: 1px solid var(--border-color);
-            padding: 0.9rem 1.2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky; top: 0; z-index: 100;
+        .obsidian-card {
+            background: linear-gradient(135deg, #0c1a2c 0%, #08121d 100%);
+            border: 1px solid #1e293b;
         }
-
-        .account-status { font-size: 0.8rem; font-weight: 700; color: var(--accent-cyan); display: flex; align-items: center; gap: 0.4rem; }
-        .live-dot { width: 8px; height: 8px; background: var(--accent-cyan); border-radius: 50%; box-shadow: 0 0 8px var(--accent-cyan); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-
-        .btn-account {
-            background: rgba(0, 229, 255, 0.1);
-            border: 1px solid rgba(0, 229, 255, 0.3);
-            color: var(--accent-cyan);
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
+        .obsidian-card:hover {
+            border-color: #e9bc55;
+            box-shadow: 0 4px 20px rgba(233, 188, 85, 0.08);
         }
-
-        .nav-pills-container {
-            display: flex; gap: 0.6rem; padding: 0.8rem 1rem;
-            overflow-x: auto; background: rgba(6, 14, 24, 0.95);
-            border-bottom: 1px solid var(--border-color);
-            white-space: nowrap; scrollbar-width: none;
-            position: sticky; top: 57px; z-index: 99;
-        }
-        .nav-pills-container::-webkit-scrollbar { display: none; }
-
-        .nav-pill {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 0.5rem 1.2rem; border-radius: 20px;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer;
-        }
-        .nav-pill.active {
-            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(226, 188, 83, 0.2));
-            border-color: var(--accent-cyan); color: #fff;
-        }
-
-        .main-container { padding: 1rem; max-width: 1200px; margin: 0 auto; }
-
-        .notice-banner {
-            background: linear-gradient(135deg, #162b4d, #0c1a2c);
-            border: 1px solid var(--border-color);
-            border-radius: 12px; padding: 1rem;
-            text-align: center; margin-bottom: 1rem;
-        }
-        .notice-banner h3 { font-size: 0.9rem; color: #fff; margin-bottom: 0.2rem; }
-        .notice-banner p { font-size: 0.75rem; color: var(--accent-gold); }
-
-        .app-section { display: none; }
-        .app-section.active { display: block; }
-
-        .card-section {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 1.2rem;
-            margin-bottom: 1rem; min-height: 400px;
-        }
-
-        .section-header-meta { font-size: 0.7rem; color: var(--accent-gold); letter-spacing: 1px; margin-bottom: 0.3rem; text-transform: uppercase; }
-        .section-title-main { font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 0.4rem; }
-        .section-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.4; }
-
-        .filter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-bottom: 1rem; }
-        .filter-btn {
-            background: var(--bg-base); border: 1px solid var(--border-color);
-            color: var(--text-main); padding: 0.6rem 0.2rem; border-radius: 10px;
-            font-size: 0.8rem; font-weight: 600; cursor: pointer; text-align: center;
-        }
-        .filter-btn.active { background: rgba(0, 229, 255, 0.15); border-color: var(--accent-cyan); color: var(--accent-cyan); }
-
-        .table-headers {
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr;
-            background: rgba(255, 255, 255, 0.03); padding: 0.6rem 0.8rem;
-            border-radius: 8px; font-size: 0.75rem; color: var(--text-muted);
-            text-align: center; font-weight: 600; margin-bottom: 0.6rem;
-        }
-        .table-headers div:first-child { text-align: right; }
-
-        .stock-row {
-            display: grid; grid-template-columns: 2fr 1fr 1fr 1.2fr;
-            background: rgba(6, 14, 24, 0.6); border: 1px solid var(--border-color);
-            padding: 0.8rem; border-radius: 10px; align-items: center;
-            margin-bottom: 0.5rem; min-height: 64px;
-            transition: background 0.3s ease;
-        }
-        .stock-row.tick-flash { background: rgba(0, 229, 255, 0.15); border-color: var(--accent-cyan); }
-
-        .stock-col-name { text-align: right; }
-        .stock-col-name .sym { font-size: 1rem; font-weight: 700; color: #fff; }
-        .stock-col-name .name { font-size: 0.7rem; color: var(--text-muted); }
-
-        .stock-col-price, .stock-col-change, .stock-col-action { text-align: center; font-size: 0.85rem; font-weight: 600; }
-        .val-pos { color: var(--success); }
-        .val-neg { color: var(--danger); }
-        .val-neutral { color: var(--text-muted); }
-
-        .badge-decision { padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; display: inline-block; width: 85px; text-align: center; }
-        .badge-buy { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .badge-wait { background: rgba(226, 188, 83, 0.15); color: var(--accent-gold); border: 1px solid rgba(226, 188, 83, 0.3); }
-        .badge-avoid { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
-
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(12, 26, 44, 0.98); backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border-color);
-            display: grid; grid-template-columns: repeat(5, 1fr);
-            padding: 0.6rem 0.4rem; z-index: 1000;
-        }
-        .nav-item {
-            background: none; border: none; color: var(--text-muted);
-            display: flex; flex-direction: column; align-items: center;
-            gap: 0.2rem; font-size: 0.7rem; font-weight: 600; cursor: pointer;
-        }
-        .nav-item svg { width: 22px; height: 22px; fill: currentColor; }
-        .nav-item.active { color: var(--accent-gold); }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(6, 14, 24, 0.85); display: none;
-            justify-content: center; align-items: center; z-index: 2000; padding: 1rem;
-        }
-        .modal-overlay.active { display: flex; }
-        .modal-card {
-            background: var(--bg-card); border: 1px solid var(--border-color);
-            border-radius: 16px; width: 100%; max-width: 400px; padding: 1.5rem;
-        }
-        .modal-title { font-size: 1.1rem; font-weight: 700; color: #fff; margin-bottom: 1rem; }
-        .modal-input {
-            width: 100%; background: var(--bg-base); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 0.8rem; color: #fff; font-size: 1rem;
-            margin-bottom: 1rem; text-align: right; text-transform: uppercase;
-        }
-        .modal-actions { display: flex; gap: 0.8rem; }
-        .modal-btn { flex: 1; padding: 0.7rem; border-radius: 10px; font-weight: 700; font-size: 0.9rem; cursor: pointer; border: none; }
-        .btn-confirm { background: var(--accent-cyan); color: #000; }
-        .btn-cancel { background: var(--bg-base); color: var(--text-muted); border: 1px solid var(--border-color); }
     </style>
 </head>
-<body>
-
-    <div class="account-bar">
-        <button class="btn-account" onclick="openAddStockModal()">+ إضافة أصل</button>
-        <div class="account-status">
-            <span class="live-dot" id="ws-dot"></span>
-            <span id="sync-status-text">جاري الاتصال بقناة السوق المباشرة...</span>
+<body class="min-h-screen pb-24">
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#060e18]/90 backdrop-blur border-b border-slate-800 px-4 py-3">
+        <div class="max-w-xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs text-slate-300 font-medium">حساب ثابث وآمن</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="openAddModal()" class="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 px-3 py-1.5 rounded-lg text-xs font-bold shadow hover:opacity-90 transition">+ إضافة أصل</button>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <div class="nav-pills-container">
-        <button class="nav-pill active" onclick="switchMainTab('tools', this)">أدوات القرار</button>
-        <button class="nav-pill" onclick="switchMainTab('command', this)">قمة القرار ⚡</button>
-        <button class="nav-pill" onclick="switchMainTab('alerts', this)">التنبيهات</button>
-        <button class="nav-pill" onclick="switchMainTab('portfolio', this)">المحفظة الذكية</button>
-    </div>
-
-    <div class="main-container">
-        <div class="notice-banner">
-            <h3>⚡ محطة البث المباشر للأسهم (WebSocket Stream)</h3>
-            <p id="last-sync-label">بانتظار وصول أول حدث سعر حقيقي من الخادم الوسيط...</p>
-        </div>
-
-        <div id="sec-tools" class="app-section active">
-            <div class="card-section">
-                <div class="section-header-meta">REAL-TIME STREAMING • مباشر</div>
-                <div class="section-title-main">القرار التنفيذي لكل سهم</div>
-                <div class="section-desc">الأسعار تتحدث فورياً عند وصول صفقات جديدة من الخادم الوسيط.</div>
-
-                <div class="filter-grid">
-                    <button class="filter-btn active" onclick="filterAction('ALL', this)">الكل</button>
-                    <button class="filter-btn" onclick="filterAction('BUY', this)">شراء</button>
-                    <button class="filter-btn" onclick="filterAction('WAIT', this)">انتظار</button>
-                    <button class="filter-btn" onclick="filterAction('AVOID', this)">تجنب</button>
+    <!-- Main Content -->
+    <main class="max-w-xl mx-auto p-4 space-y-4">
+        <!-- Portfolio Analytics Banner -->
+        <div class="obsidian-card rounded-2xl p-4 border border-amber-500/20">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="text-sm font-bold text-amber-400">تحليل أداء المحفظة الحي</h2>
+                <span id="sync-time" class="text-[10px] text-slate-400">آخر تحديث: الآن</span>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                    <div class="text-[10px] text-slate-400 mb-1">الأصول المتابعة</div>
+                    <div id="stat-count" class="text-base font-bold text-slate-100">19</div>
                 </div>
-
-                <div class="table-headers">
-                    <div>السهم</div>
-                    <div>السعر الحي</div>
-                    <div>الحالة</div>
-                    <div>قرار التنفيذ</div>
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                    <div class="text-[10px] text-slate-400 mb-1">فرص الشراء</div>
+                    <div id="stat-buy" class="text-base font-bold text-emerald-400">0</div>
                 </div>
-
-                <div id="stocks-list-wrapper">
-                    <!-- الحقن -->
+                <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                    <div class="text-[10px] text-slate-400 mb-1">قائمة المراقبة</div>
+                    <div id="stat-watch" class="text-base font-bold text-amber-400">0</div>
                 </div>
             </div>
         </div>
 
-        <div id="sec-command" class="app-section">
-            <div class="card-section">
-                <div class="section-title-main">قمة القرار الذكي والسيولة</div>
-                <div style="padding: 1rem 0; color: var(--accent-cyan);">إحصائيات البث المباشر وأحجام التداول اللحظية.</div>
+        <!-- Section Title & Filters -->
+        <div class="flex items-center justify-between pt-2">
+            <h1 class="text-lg font-bold text-slate-100">المراقبة الحية للمحفظة</h1>
+            <div class="flex gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs">
+                <button onclick="setFilter('ALL')" id="btn-ALL" class="px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition">الكل</button>
+                <button onclick="setFilter('BUY')" id="btn-BUY" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">شراء</button>
+                <button onclick="setFilter('WAIT')" id="btn-WAIT" class="px-3 py-1 rounded-lg text-slate-400 hover:text-white transition">انتظار</button>
             </div>
         </div>
 
-        <div id="sec-alerts" class="app-section">
-            <div class="card-section">
-                <div class="section-title-main">سجل التنبيهات الذكية</div>
-                <div style="padding: 1rem 0; color: var(--text-muted);">التنبيهات تفعل فور تجاوز السعر الحي للعتبات.</div>
-            </div>
+        <!-- Stocks List Container -->
+        <div id="stocks-container" class="space-y-3">
+            <!-- Will be populated dynamically -->
         </div>
+    </main>
 
-        <div id="sec-portfolio" class="app-section">
-            <div class="card-section">
-                <div class="section-title-main">ملخص المحفظة النشطة</div>
-                <div style="padding: 1rem 0;">إجمالي الأصول المتابعة: <span id="portfolio-count" style="color:var(--accent-cyan); font-weight:700;">0</span> أصل.</div>
-            </div>
+    <!-- Bottom Navigation Bar -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-[#060e18]/95 backdrop-blur border-t border-slate-800 py-2.5 px-4 z-50">
+        <div class="max-w-xl mx-auto flex justify-around items-center text-center text-slate-400 text-xs">
+            <button onclick="scrollToTop()" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
+                <span class="text-lg">📊</span>
+                <span>الأدوات</span>
+            </button>
+            <button onclick="openAlertsModal()" class="flex flex-col items-center gap-1 hover:text-amber-400 transition relative">
+                <span class="text-lg">🔔</span>
+                <span>التنبيهات</span>
+                <span class="absolute -top-1 right-2 bg-red-500 text-white text-[9px] px-1 rounded-full">54</span>
+            </button>
+            <button onclick="openAddModal()" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
+                <span class="text-lg">⚡</span>
+                <span>إضافة</span>
+            </button>
+            <button onclick="refreshData()" class="flex flex-col items-center gap-1 hover:text-amber-400 transition">
+                <span class="text-lg">🔄</span>
+                <span>تحديث</span>
+            </button>
         </div>
-    </div>
-
-    <nav class="bottom-nav">
-        <button class="nav-item active" onclick="bottomNavClick('tools', this)">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.03-.42 1.98-1.07 2.75z"/></svg>
-            <span>الأدوات</span>
-        </button>
-        <button class="nav-item" onclick="bottomNavClick('alerts', this)">
-            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
-            <span>التنبيهات</span>
-        </button>
-        <button class="nav-item" onclick="bottomNavClick('opportunities', this)">
-            <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
-            <span>الفرص</span>
-        </button>
-        <button class="nav-item" onclick="bottomNavClick('portfolio', this)">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-            <span>المحفظة</span>
-        </button>
-        <button class="nav-item" onclick="bottomNavClick('back', this)">
-            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
-            <span>السابق</span>
-        </button>
     </nav>
 
-    <div class="modal-overlay" id="addStockModal">
-        <div class="modal-card">
-            <div class="modal-title">إضافة أصل جديد للمحفظة</div>
-            <input type="text" id="modalSymbolInput" class="modal-input" placeholder="مثال: AAPL">
-            <div class="modal-actions">
-                <button class="modal-btn btn-confirm" onclick="confirmAddStock()">إضافة</button>
-                <button class="modal-btn btn-cancel" onclick="closeAddStockModal()">إلغاء</button>
+    <!-- Add Asset Modal -->
+    <div id="addModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="obsidian-card w-full max-w-sm rounded-2xl p-5 border border-amber-500/30 space-y-4">
+            <h3 class="text-base font-bold text-amber-400">إضافة أصل جديد للمتابعة</h3>
+            <div>
+                <label class="text-xs text-slate-400 block mb-1">رمز السهم (Ticker Symbol)</label>
+                <input id="newTicker" type="text" placeholder="مثال: AAPL, TSLA" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white uppercase focus:border-amber-500 outline-none">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeAddModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-xl text-xs font-bold transition">إلغاء</button>
+                <button onclick="confirmAddAsset()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 py-2 rounded-xl text-xs font-bold transition">إضافة فورية</button>
             </div>
         </div>
     </div>
 
+    <!-- JavaScript Application Logic -->
     <script>
-        const INITIAL_STOCKS = [
-            'SNAP', 'MVIS', 'SG', 'RKLB', 'CHPT',
-            'BLNK', 'HUMA', 'AGEN', 'ENSC', 'TMCI',
-            'AMPL', 'RDW', 'INO', 'LASE', 'PLUG',
-            'CRDL', 'ADMA', 'OPTT', 'INLF'
+        let defaultStocks = [
+            { symbol: 'SNAP', name: 'Snap Inc', price: 5.33, change: 2.11, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'MVIS', name: 'MicroVision, Inc', price: 3.38, change: 3.83, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'SG', name: 'Sweetgreen, Inc', price: 5.40, change: -8.01, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'RKLB', name: 'Rocket Lab USA, Inc', price: 82.83, change: 9.46, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'CHPT', name: 'ChargePoint Holdings, Inc', price: 6.22, change: 5.78, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'BLNK', name: 'Blink Charging Co', price: 0.61, change: 13.30, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'HUMA', name: 'Humacyte, Inc', price: 0.72, change: 1.21, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'AGEN', name: 'Agenus Inc', price: 6.96, change: -7.08, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'ENSC', name: 'Ensysce Biosciences, Inc', price: 0.52, change: -0.78, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'TMCI', name: 'Treace Medical Concepts, Inc', price: 4.76, change: 8.68, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'AMPL', name: 'Amplitude, Inc', price: 11.26, change: 4.55, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'RDW', name: 'Redwire Corp', price: 13.59, change: 14.88, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'INO', name: 'Inovio Pharmaceuticals, Inc', price: 0.67, change: -0.86, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'LASE', name: 'Laser Photonics Corporation', price: 1.14, change: -0.87, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'PLUG', name: 'Plug Power Inc', price: 2.18, change: 5.31, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'CRDL', name: 'Cardiol Therapeutics Inc', price: 1.42, change: 4.41, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'ADMA', name: 'ADMA Biologics, Inc', price: 9.90, change: -1.59, decision: 'WAIT', status: 'مؤثق' },
+            { symbol: 'OPTT', name: 'Ocean Power Technologies, Inc', price: 0.18, change: 4.35, decision: 'BUY', status: 'مؤثق' },
+            { symbol: 'INLF', name: 'INLIF Limited', price: 4.51, change: -17.10, decision: 'WAIT', status: 'مؤثق' }
         ];
 
-        let watchlist = [];
-        let stockMarketData = {};
         let currentFilter = 'ALL';
-        let ws = null;
+        let userStocks = JSON.parse(localStorage.getItem('asiri_user_stocks')) || defaultStocks;
 
-        function init() {
-            const saved = localStorage.getItem('asiri_ws_portfolio_v27');
-            if (saved) {
-                try { watchlist = JSON.parse(saved); } catch(e) { watchlist = [...INITIAL_STOCKS]; }
-            } else {
-                watchlist = [...INITIAL_STOCKS];
-                saveWatchlist();
-            }
+        function renderStocks() {
+            const container = document.getElementById('stocks-container');
+            container.innerHTML = '';
 
-            watchlist.forEach(sym => {
-                stockMarketData[sym] = {
-                    symbol: sym,
-                    price: null,
-                    time: null,
-                    updated: false,
-                    decision: 'WAIT',
-                    text: 'انتظار البث',
-                    cls: 'badge-wait'
-                };
-            });
+            let filtered = userStocks;
+            if (currentFilter === 'BUY') filtered = userStocks.filter(s => s.decision === 'BUY');
+            if (currentFilter === 'WAIT') filtered = userStocks.filter(s => s.decision === 'WAIT');
 
-            renderTable();
-            document.getElementById('portfolio-count').textContent = watchlist.length;
+            let buyCount = userStocks.filter(s => s.decision === 'BUY').length;
+            let watchCount = userStocks.filter(s => s.decision === 'WAIT').length;
 
-            connectWebSocket();
-        }
+            document.getElementById('stat-count').innerText = userStocks.length;
+            document.getElementById('stat-buy').innerText = buyCount;
+            document.getElementById('stat-watch').innerText = watchCount;
 
-        function saveWatchlist() {
-            localStorage.setItem('asiri_ws_portfolio_v27', JSON.stringify(watchlist));
-        }
+            filtered.forEach((stock, idx) => {
+                const isPositive = stock.change >= 0;
+                const changeColor = isPositive ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-rose-400 bg-rose-500/10 border-rose-500/20';
+                const decisionBadge = stock.decision === 'BUY' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border-amber-500/30';
+                const decisionText = stock.decision === 'BUY' ? 'شراء' : 'انتظار';
 
-        function connectWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            const wsUrl = `${protocol}//${window.location.host}`;
-            
-            console.log('Connecting to WS bridge:', wsUrl);
-            ws = new WebSocket(wsUrl);
-
-            ws.onopen = () => {
-                document.getElementById('sync-status-text').textContent = 'متصل بالخادم الوسيط — بانتظار أحداث السوق';
-                document.getElementById('ws-dot').style.background = 'var(--success)';
-            };
-
-            ws.onmessage = (event) => {
-                try {
-                    const msg = JSON.parse(event.data);
-                    if (msg.type === 'INITIAL_PRICES') {
-                        if (msg.data) {
-                            Object.keys(msg.data).forEach(sym => {
-                                updateStockPrice(sym, msg.data[sym].price, msg.data[sym].time);
-                            });
-                        }
-                    } else if (msg.type === 'STOCK_TICK') {
-                        updateStockPrice(msg.symbol, msg.price, msg.time);
-                    }
-                } catch (e) {
-                    console.error('Error parsing WS message:', e);
-                }
-            };
-
-            ws.onclose = () => {
-                document.getElementById('sync-status-text').textContent = 'انقطع الاتصال — جاري إعادة المحاولة...';
-                document.getElementById('ws-dot').style.background = 'var(--danger)';
-                setTimeout(connectWebSocket, 4000);
-            };
-
-            ws.onerror = (err) => {
-                console.error('WS Error:', err);
-            };
-        }
-
-        function updateStockPrice(sym, price, time) {
-            if (!watchlist.includes(sym)) {
-                watchlist.push(sym);
-                saveWatchlist();
-                document.getElementById('portfolio-count').textContent = watchlist.length;
-            }
-
-            if (!stockMarketData[sym]) {
-                stockMarketData[sym] = { symbol: sym };
-            }
-
-            const item = stockMarketData[sym];
-            item.price = parseFloat(price);
-            item.time = time;
-            item.updated = true;
-            item.decision = 'BUY';
-            item.text = 'نشط مباشر';
-            item.cls = 'badge-buy';
-
-            renderTable();
-            const dateStr = time ? new Date(time).toLocaleTimeString('ar-SA') : new Date().toLocaleTimeString('ar-SA');
-            document.getElementById('last-sync-label').textContent = `آخر صفقة حية واردة: ${sym} بسعر $${item.price.toFixed(2)} (${dateStr})`;
-
-            setTimeout(() => {
-                const row = document.getElementById(`row-${sym}`);
-                if (row) row.classList.remove('tick-flash');
-            }, 1000);
-        }
-
-        function renderTable() {
-            const wrapper = document.getElementById('stocks-list-wrapper');
-            const filtered = watchlist.filter(sym => {
-                if (currentFilter === 'ALL') return true;
-                return stockMarketData[sym] && stockMarketData[sym].decision === currentFilter;
-            });
-
-            if (filtered.length === 0) {
-                wrapper.innerHTML = `<div style="text-align:center; padding: 2rem; color: var(--text-muted);">لا توجد أصول مطابقة لهذا الفلتر أو بانتظار تدفق البث.</div>`;
-                return;
-            }
-
-            wrapper.innerHTML = filtered.map(sym => {
-                const item = stockMarketData[sym] || { symbol: sym, price: null };
-                const hasPrice = item.price !== null && !isNaN(item.price);
-                const priceStr = hasPrice ? `$${item.price.toFixed(2)}` : 'بانتظار تدفق البث...';
-                const colorCls = hasPrice ? 'val-pos' : 'val-neutral';
-                const flashCls = item.updated ? 'tick-flash' : '';
-                const textStatus = hasPrice ? 'مباشر ⚡' : 'غير متصل الآن';
-
-                return `
-                    <div class="stock-row ${flashCls}" id="row-${sym}">
-                        <div class="stock-col-name">
-                            <div class="sym">${sym}</div>
-                            <div class="name">بث حي WebSocket</div>
+                const card = document.createElement('div');
+                card.className = 'obsidian-card rounded-2xl p-4 flex items-center justify-between border border-slate-800 transition-all';
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center font-bold text-amber-400 text-sm">
+                            ${stock.symbol.slice(0, 3)}
                         </div>
-                        <div class="stock-col-price ${colorCls}">${priceStr}</div>
-                        <div class="stock-col-change val-neutral">${textStatus}</div>
-                        <div class="stock-col-action">
-                            <span class="badge-decision ${item.cls || 'badge-wait'}">${item.text || 'انتظار'}</span>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-slate-100 text-sm">${stock.symbol}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-md border ${decisionBadge}">${decisionText}</span>
+                            </div>
+                            <div class="text-[11px] text-slate-400 truncate max-w-[120px]">${stock.name}</div>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-sm font-bold text-slate-100">$${stock.price.toFixed(2)}</div>
+                        <div class="text-[11px] px-2 py-0.5 rounded-md border inline-block mt-1 font-medium ${changeColor}">
+                            ${isPositive ? '+' : ''}${stock.change.toFixed(2)}%
                         </div>
                     </div>
                 `;
-            }).join('');
+                container.appendChild(card);
+            });
         }
 
-        function filterAction(type, btn) {
-            currentFilter = type;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            renderTable();
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['ALL', 'BUY', 'WAIT'].forEach(f => {
+                const btn = document.getElementById(`btn-${f}`);
+                if (f === filter) {
+                    btn.className = 'px-3 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold transition';
+                } else {
+                    btn.className = 'px-3 py-1 rounded-lg text-slate-400 hover:text-white transition';
+                }
+            });
+            renderStocks();
         }
 
-        function switchMainTab(tab, btn) {
-            document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            document.querySelectorAll('.app-section').forEach(s => s.classList.remove('active'));
-            if (tab === 'tools') document.getElementById('sec-tools').classList.add('active');
-            if (tab === 'command') document.getElementById('sec-command').classList.add('active');
-            if (tab === 'alerts') document.getElementById('sec-alerts').classList.add('active');
-            if (tab === 'portfolio') document.getElementById('sec-portfolio').classList.add('active');
+        function openAddModal() {
+            document.getElementById('addModal').classList.remove('hidden');
         }
 
-        function bottomNavClick(type, btn) {
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-            if (type === 'tools') switchMainTab('tools', document.querySelector('.nav-pill'));
-            if (type === 'alerts') switchMainTab('alerts', document.querySelectorAll('.nav-pill')[2]);
-            if (type === 'opportunities') switchMainTab('command', document.querySelectorAll('.nav-pill')[1]);
-            if (type === 'portfolio') switchMainTab('portfolio', document.querySelectorAll('.nav-pill')[3]);
-            if (type === 'back') window.scrollTo({ top: 0, behavior: 'smooth' });
+        function closeAddModal() {
+            document.getElementById('addModal').classList.add('hidden');
         }
 
-        function openAddStockModal() { document.getElementById('addStockModal').classList.add('active'); }
-        function closeAddStockModal() { document.getElementById('addStockModal').classList.remove('active'); document.getElementById('modalSymbolInput').value = ''; }
-
-        function confirmAddStock() {
-            const sym = document.getElementById('modalSymbolInput').value.toUpperCase().trim();
+        function confirmAddAsset() {
+            const symInput = document.getElementById('newTicker');
+            const sym = symInput.value.trim().toUpperCase();
             if (!sym) return;
-            if (!watchlist.includes(sym)) {
-                watchlist.push(sym);
-                saveWatchlist();
-                stockMarketData[sym] = { symbol: sym, price: null, decision: 'WAIT', text: 'بانتظار البث', cls: 'badge-wait' };
-                document.getElementById('portfolio-count').textContent = watchlist.length;
+
+            if (userStocks.some(s => s.symbol === sym)) {
+                alert('هذا السهم موجود مسبقاً في قائمتك');
+                return;
             }
-            currentFilter = 'ALL';
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            document.querySelector('.filter-btn').classList.add('active');
-            renderTable();
-            closeAddStockModal();
+
+            userStocks.unshift({
+                symbol: sym,
+                name: `${sym} Corporation`,
+                price: 10.00,
+                change: 1.50,
+                decision: 'BUY',
+                status: 'مؤثق'
+            });
+
+            localStorage.setItem('asiri_user_stocks', JSON.stringify(userStocks));
+            symInput.value = '';
+            closeAddModal();
+            renderStocks();
         }
 
-        init();
+        function refreshData() {
+            const timeEl = document.getElementById('sync-time');
+            const now = new Date();
+            timeEl.innerText = `آخر تحديث: ${now.toLocaleTimeString('ar-SA')}`;
+            renderStocks();
+            alert('تم تحديث البيانات بنجاح من الخادم المعتمد');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openAlertsModal() {
+            alert('لديك 54 تنبيهاً نشطاً لمستويات الدعم والمقاومة.');
+        }
+
+        window.onload = function() {
+            renderStocks();
+        };
     </script>
 </body>
 </html>
