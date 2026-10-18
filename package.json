@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node live-server.js",
     "start": "node live-server.js",
-    "check": "node check-v720.js"
+    "check": "node check-v720.js",
+    "check:command-center": "node check-command-center-v1.mjs"
   },
   "engines": {
     "node": "22.x"
